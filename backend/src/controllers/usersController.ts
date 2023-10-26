@@ -1,7 +1,10 @@
 import {compare, hash} from 'bcrypt'
+import {createToken} from '../utils/tokenManager.js'
 import {UserModel} from "../db/models/UserModel.js"
 
 import type {NextFunction, Request, Response} from 'express'
+
+import {COOKIE_TOKEN_NAME, COOKIE_TOKEN_OPTIONS} from '../constants/index.js'
 
 export const getAllUsers = async (_req: Request, res: Response, _next: NextFunction) => {
   try {
@@ -43,6 +46,21 @@ export const logInUser = async (req: Request, res: Response, _next: NextFunction
       })
     }
 
+    res.clearCookie(COOKIE_TOKEN_NAME, COOKIE_TOKEN_OPTIONS)
+
+    const token = createToken(user._id.toString(), email, '7d')
+    const expiresDate = new Date()
+    expiresDate.setDate(expiresDate.getDate() + 7)
+
+    res.cookie(
+      COOKIE_TOKEN_NAME,
+      token,
+      {
+        ...COOKIE_TOKEN_OPTIONS,
+        expires: expiresDate,
+      }
+    )
+
     return res.status(200).json({
       status: 'OK',
       userId: user._id.toString(),
@@ -56,7 +74,6 @@ export const logInUser = async (req: Request, res: Response, _next: NextFunction
     })
   }
 }
-
 
 export const signUpUser = async (req: Request, res: Response, _next: NextFunction) => {
   try {
@@ -80,6 +97,21 @@ export const signUpUser = async (req: Request, res: Response, _next: NextFunctio
     })
 
     await user.save()
+
+    res.clearCookie(COOKIE_TOKEN_NAME, COOKIE_TOKEN_OPTIONS)
+
+    const token = createToken(user._id.toString(), email, '7d')
+    const expiresDate = new Date()
+    expiresDate.setDate(expiresDate.getDate() + 7)
+
+    res.cookie(
+      COOKIE_TOKEN_NAME,
+      token,
+      {
+        ...COOKIE_TOKEN_OPTIONS,
+        expires: expiresDate,
+      }
+    )
 
     return res.status(201).json({
       status: 'OK',
