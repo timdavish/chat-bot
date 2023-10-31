@@ -1,6 +1,6 @@
 import {compare, hash} from 'bcrypt'
 import {createToken} from '../utils/tokenManager.js'
-import {UserModel} from "../db/models/UserModel.js"
+import {UserModel} from '../db/models/UserModel.js'
 
 import type {NextFunction, Request, Response} from 'express'
 
@@ -14,7 +14,7 @@ export const getAllUsers = async (_req: Request, res: Response, _next: NextFunct
       status: 'OK',
       users,
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error(error)
 
     return res.status(500).json({
@@ -52,20 +52,19 @@ export const logInUser = async (req: Request, res: Response, _next: NextFunction
     const expiresDate = new Date()
     expiresDate.setDate(expiresDate.getDate() + 7)
 
-    res.cookie(
-      COOKIE_TOKEN_NAME,
-      token,
-      {
-        ...COOKIE_TOKEN_OPTIONS,
-        expires: expiresDate,
-      }
-    )
+    res.cookie(COOKIE_TOKEN_NAME, token, {
+      ...COOKIE_TOKEN_OPTIONS,
+      expires: expiresDate,
+    })
 
     return res.status(200).json({
       status: 'OK',
-      userId: user._id.toString(),
+
+      email: user.email,
+      id: user._id.toString(),
+      name: user.name,
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error(error)
 
     return res.status(500).json({
@@ -104,20 +103,19 @@ export const signUpUser = async (req: Request, res: Response, _next: NextFunctio
     const expiresDate = new Date()
     expiresDate.setDate(expiresDate.getDate() + 7)
 
-    res.cookie(
-      COOKIE_TOKEN_NAME,
-      token,
-      {
-        ...COOKIE_TOKEN_OPTIONS,
-        expires: expiresDate,
-      }
-    )
+    res.cookie(COOKIE_TOKEN_NAME, token, {
+      ...COOKIE_TOKEN_OPTIONS,
+      expires: expiresDate,
+    })
 
     return res.status(201).json({
       status: 'OK',
-      userId: user._id.toString(),
+
+      email: user.email,
+      id: user._id.toString(),
+      name: user.name,
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error(error)
 
     return res.status(500).json({

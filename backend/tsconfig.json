@@ -1,12 +1,19 @@
 {
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
     "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "outDir": "dist",
+    "sourceMap": true,
     "target": "ES2022",
 
-    "allowSyntheticDefaultImports": true,
-    "outDir": "dist",
-    "sourceMap": true
+    /* Bundler mode */
+    "moduleResolution": "NodeNext",
+
+    /* Linting */
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strict": true
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src"]
 }
