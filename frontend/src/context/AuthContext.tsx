@@ -1,6 +1,6 @@
 import {ReactNode, createContext, useContext, useEffect, useState} from 'react'
 
-import {logIn as apiLogIn} from '../helpers/api'
+import * as api from '../helpers/api'
 
 import type {User} from '../types'
 
@@ -23,15 +23,27 @@ export const AuthProvider = ({children}: Props) => {
   const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
-    // TODO: fetch user cookies
+    const getAuthStatus = async () => {
+      const data = await api.getAuthStatus()
+
+      if (data) {
+        setIsLoggedIn(true)
+        setUser({email: data.email, id: data.id, name: data.name})
+      } else {
+        setIsLoggedIn(false)
+        setUser(null)
+      }
+    }
+
+    getAuthStatus()
   }, [])
 
   const logIn = async (email: string, password: string) => {
-    const data = await apiLogIn(email, password)
+    const data = await api.logIn(email, password)
 
     if (data) {
-      setUser({email: data.email, id: data.id, name: data.name})
       setIsLoggedIn(true)
+      setUser({email: data.email, id: data.id, name: data.name})
     }
   }
 

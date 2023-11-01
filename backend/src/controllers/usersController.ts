@@ -1,10 +1,10 @@
+import {COOKIE_TOKEN_NAME, COOKIE_TOKEN_OPTIONS, VERIFY_USER_ERROR} from '../constants/index.js'
+
 import {compare, hash} from 'bcrypt'
 import {createToken} from '../utils/tokenManager.js'
 import {UserModel} from '../db/models/UserModel.js'
 
 import type {NextFunction, Request, Response} from 'express'
-
-import {COOKIE_TOKEN_NAME, COOKIE_TOKEN_OPTIONS} from '../constants/index.js'
 
 export const getAllUsers = async (_req: Request, res: Response, _next: NextFunction) => {
   try {
@@ -114,6 +114,41 @@ export const signUpUser = async (req: Request, res: Response, _next: NextFunctio
       email: user.email,
       id: user._id.toString(),
       name: user.name,
+    })
+  } catch (error: any) {
+    console.error(error)
+
+    return res.status(500).json({
+      error: error.message,
+      status: 'ERROR',
+    })
+  }
+}
+
+export const verifyUser = async (_req: Request, res: Response, _next: NextFunction) => {
+  try {
+    const existingUser = await UserModel.findById(res.locals.jwtData.id)
+
+    if (!existingUser) {
+      return res.status(401).json({
+        error: VERIFY_USER_ERROR,
+        status: 'ERROR',
+      })
+    }
+
+    if (existingUser._id.toString() !== res.locals.jwtData.id) {
+      return res.status(401).json({
+        error: 'Should never happen',
+        status: 'ERROR',
+      })
+    }
+
+    return res.status(200).json({
+      status: 'OK',
+
+      email: existingUser.email,
+      id: existingUser._id.toString(),
+      name: existingUser.name,
     })
   } catch (error: any) {
     console.error(error)
