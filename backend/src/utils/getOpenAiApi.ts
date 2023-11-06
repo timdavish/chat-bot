@@ -12,10 +12,12 @@ export const getOpenAiApi = () => {
     throw new Error('OPEN_AI_ORGANIZATION_ID not set.')
   }
 
-  const openAiConfig = new Configuration({
+  console.log(OPEN_AI_API_KEY, OPEN_AI_ORGANIZATION_ID)
+
+  const openAiConfiguration = new Configuration({
     apiKey: OPEN_AI_API_KEY,
     organization: OPEN_AI_ORGANIZATION_ID,
   })
 
-  return new OpenAIApi(openAiConfig)
+  return new OpenAIApi(openAiConfiguration)
 }

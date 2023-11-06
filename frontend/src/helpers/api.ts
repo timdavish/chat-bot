@@ -19,3 +19,13 @@ export const getAuthStatus = async () => {
 
   return res.data
 }
+
+export const createChatMessage = async (content: string) => {
+  const res = await axios.post('/chats/messages', {content})
+
+  if (res.status !== 200) {
+    throw new Error('Failed to create chat message')
+  }
+
+  return res.data
+}

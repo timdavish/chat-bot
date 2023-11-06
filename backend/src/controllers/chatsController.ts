@@ -2,12 +2,17 @@ import {VERIFY_USER_ERROR} from '../constants/errors.js'
 
 import {UserModel} from '../db/models/UserModel.js'
 
-import {getOpenAiApi} from '../utils/index.js'
+// import {getOpenAiApi} from '../utils/index.js'
 
 import type {NextFunction, Request, Response} from 'express'
-import type {ChatCompletionRequestMessage} from 'openai'
+// import type {ChatCompletionRequestMessage} from 'openai'
 
-export const createChatCompletion = async (req: Request, res: Response, next: NextFunction) => {
+const FAKE_RESPONSE_CHAT_MESSAGE = {
+  content: "This is a fake response because OpenAI's free tier is horrendously bad. Sorry!",
+  role: 'assistant',
+}
+
+export const createChatMessage = async (req: Request, res: Response, _next: NextFunction) => {
   const user = await UserModel.findById(res.locals.jwtData.id)
 
   if (!user) {
@@ -16,28 +21,29 @@ export const createChatCompletion = async (req: Request, res: Response, next: Ne
     })
   }
 
-  const {message} = req.body
+  const {content} = req.body
 
   try {
     user.chats.push({
-      content: message,
+      content,
       role: 'user',
     })
 
-    const openAiApi = getOpenAiApi()
+    // const openAiApi = getOpenAiApi()
 
-    const chatResponse = await openAiApi.createChatCompletion({
-      messages: user.chats.map(
-        chat =>
-          ({
-            content: chat.content,
-            role: chat.content,
-          } as ChatCompletionRequestMessage)
-      ),
-      model: 'gpt-3.5-turbo',
-    })
+    // const chatCompletionRes = await openAiApi.createChatCompletion({
+    //   messages: user.chats.map(
+    //     chat =>
+    //       ({
+    //         content: chat.content,
+    //         role: chat.role,
+    //       } as ChatCompletionRequestMessage)
+    //   ),
+    //   model: 'gpt-3.5-turbo',
+    // })
 
-    user.chats.push(chatResponse.data.choices[0].message!)
+    // user.chats.push(chatCompletionRes.data.choices[0].message!)
+    user.chats.push(FAKE_RESPONSE_CHAT_MESSAGE)
     await user.save()
 
     return res.status(200).json({

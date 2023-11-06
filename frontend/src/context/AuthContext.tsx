@@ -1,6 +1,6 @@
 import {ReactNode, createContext, useContext, useEffect, useState} from 'react'
 
-import * as api from '../helpers/api'
+import {api} from '../helpers'
 
 import type {User} from '../types'
 
